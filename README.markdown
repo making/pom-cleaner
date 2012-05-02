@@ -30,15 +30,13 @@ to
 
 ## How To Build ##
 
-$ mvn package
+    $ mvn package
 
 ## How To Use ##
 
-$ java -jar target/pom-cleaner.jar --help
-
-$ java -jar target/pom-cleaner.jar <path to pom.xml>
-
-$ java -jar target/pom-cleaner.jar <path to pom.xml> --overwrite
+    $ java -jar target/pom-cleaner.jar --help
+    $ java -jar target/pom-cleaner.jar <path to pom.xml>
+    $ java -jar target/pom-cleaner.jar <path to pom.xml> --overwrite
 
 
 ## License ##
