@@ -1,4 +1,4 @@
-extract versions in pom.xml, then replace placeholder and add property to <properties> !
+extract versions in pom.xml, then replace placeholder and add property to `<properties>` !
 
 example
 
