@@ -82,7 +82,11 @@ public class Main {
         } catch (NullPointerException e) {
         }
 
-        addProperties(model.getProperties(), properties);
+        Properties p = model.getProperties();
+        if (p == null) {
+            p = new Properties();
+        }
+        addProperties(p, properties);
         OutputStream os = System.out;
         if (args.length > 1 && OVERRITE_OPT.equals(args[1])) {
             os = new BufferedOutputStream(new FileOutputStream(pom));
