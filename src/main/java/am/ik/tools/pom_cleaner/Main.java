@@ -85,6 +85,7 @@ public class Main {
         Properties p = model.getProperties();
         if (p == null) {
             p = new Properties();
+            model.setProperties(p);
         }
         addProperties(p, properties);
         OutputStream os = System.out;
