@@ -25,6 +25,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import am.ik.tools.pom_cleaner.jaxb.Dependency;
 import am.ik.tools.pom_cleaner.jaxb.Model;
 import am.ik.tools.pom_cleaner.jaxb.Model.Properties;
 
@@ -36,6 +37,47 @@ public class Main {
             + quote("}"));
 
     private static String OVERRITE_OPT = "--overwrite";
+
+    public static void sortVersionable(List<? extends Versionable> list) {
+        Collections.sort(list, new Comparator<Versionable>() {
+            @Override
+            public int compare(Versionable o1, Versionable o2) {
+                try {
+                    int c = 0;
+
+                    // first
+                    if (o1 instanceof Dependency) {
+                        Dependency d1 = (Dependency) o1;
+                        Dependency d2 = (Dependency) o2;
+                        String s1 = d1.getScope();
+                        String s2 = d2.getScope();
+                        if (s1 == null || "".equals(s1)) {
+                            s1 = "compile";
+                        }
+                        if (s2 == null || "".equals(s2)) {
+                            s2 = "compile";
+                        }
+                        c = s1.compareToIgnoreCase(s2);
+                    }
+
+                    if (c == 0) {
+                        // second
+                        c = o1.getGroupId()
+                                .compareToIgnoreCase(o2.getGroupId());
+                        if (c == 0) {
+                            // third
+                            c = o1.getArtifactId().compareToIgnoreCase(
+                                    o2.getArtifactId());
+                        }
+                    }
+                    return c;
+                } catch (Exception e) {
+                    // TODO: handle exception
+                    return 0;
+                }
+            }
+        });
+    }
 
     /**
      * @param args
@@ -56,32 +98,40 @@ public class Main {
 
         try {
             replaceVersion(model.getDependencies().getDependency(), properties);
+            sortVersionable(model.getDependencies().getDependency());
         } catch (NullPointerException e) {
         }
 
         try {
             replaceVersion(model.getDependencyManagement().getDependencies()
                     .getDependency(), properties);
+            sortVersionable(model.getDependencyManagement().getDependencies()
+                    .getDependency());
         } catch (NullPointerException e) {
         }
         try {
             replaceVersion(model.getBuild().getPlugins().getPlugin(),
                     properties);
+            sortVersionable(model.getBuild().getPlugins().getPlugin());
         } catch (NullPointerException e) {
         }
         try {
             replaceVersion(model.getBuild().getPluginManagement().getPlugins()
                     .getPlugin(), properties);
+            sortVersionable(model.getBuild().getPluginManagement().getPlugins()
+                    .getPlugin());
         } catch (NullPointerException e) {
         }
         try {
             replaceVersion(model.getBuild().getExtensions().getExtension(),
                     properties);
+            sortVersionable(model.getBuild().getExtensions().getExtension());
         } catch (NullPointerException e) {
         }
         try {
             replaceVersion(model.getReporting().getPlugins().getPlugin(),
                     properties);
+            sortVersionable(model.getReporting().getPlugins().getPlugin());
         } catch (NullPointerException e) {
         }
 
@@ -94,7 +144,7 @@ public class Main {
         Collections.sort(p.getAny(), new Comparator<Element>() {
             @Override
             public int compare(Element o1, Element o2) {
-                return o1.getTagName().compareTo(o2.getTagName());
+                return o1.getTagName().compareToIgnoreCase(o2.getTagName());
             }
         });
 
