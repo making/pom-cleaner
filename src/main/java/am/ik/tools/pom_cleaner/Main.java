@@ -5,7 +5,9 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.util.LinkedHashMap;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -32,6 +34,7 @@ import static java.util.regex.Pattern.quote;
 public class Main {
     private static Pattern ALLOWED_VERSION_PATTERN = compile(quote("${") + ".+"
             + quote("}"));
+
     private static String OVERRITE_OPT = "--overwrite";
 
     /**
@@ -49,7 +52,7 @@ public class Main {
         JAXBElement<Model> elm = createJaxbElement(context, pom);
         Model model = elm.getValue();
 
-        Map<String, String> properties = new LinkedHashMap<String, String>();
+        Map<String, String> properties = new HashMap<String, String>();
 
         try {
             replaceVersion(model.getDependencies().getDependency(), properties);
@@ -88,6 +91,13 @@ public class Main {
             model.setProperties(p);
         }
         addProperties(p, properties);
+        Collections.sort(p.getAny(), new Comparator<Element>() {
+            @Override
+            public int compare(Element o1, Element o2) {
+                return o1.getTagName().compareTo(o2.getTagName());
+            }
+        });
+
         OutputStream os = System.out;
         if (args.length > 1 && OVERRITE_OPT.equals(args[1])) {
             os = new BufferedOutputStream(new FileOutputStream(pom));
